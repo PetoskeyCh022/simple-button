@@ -2,49 +2,61 @@ import pygame
 import sys
 import config # Import the config module
 
-
 def init_game():
   pygame.init()
+  pygame.font.init()
+
   screen = pygame.display.set_mode((config.WINDOW_WIDTH, config.WINDOW_HEIGHT)) # Use constants from config
   pygame.display.set_caption(config.TITLE)
-
   return screen
 
-def handle_events():
-  for event in pygame.event.get():
-    if event.type == pygame.QUIT:
+def handle_events(button):
+  for events in pygame.event.get():
+    if events.type == pygame.QUIT:
       return False
-    elif event.type == pygame.KEYDOWN:
-      if event.key == pygame.K_ESCAPE:
+    if events.type == pygame.MOUSEBUTTONDOWN:
+      if button.collidepoint(events.pos):
+        pygame.quit()
+        sys.exit()
+    if events.type == pygame.KEYDOWN:
+      if events.key == pygame.K_ESCAPE:
         return False
   return True
 
+
+
 def main():
+  
   screen = init_game()
+  font = pygame.font.SysFont('Courier Regular', 35, bold=True)
+  surf = font.render('Quit', True, config.RED)
+
+  button_length = 200
+  button_width = 60
+  button_x = 300
+  button_y = 125
+  button = pygame.Rect(button_x, button_y, button_length, button_width)
+
+  surf_rect = surf.get_rect()
+  surf_rect.center = button.center
+
   clock = pygame.time.Clock() # Initialize the clock here
-
-  bg_pos = [0, 0]
-
-  bg_img = pygame.image.load("saturn_family1.jpg").convert()
-  player_img = pygame.image.load("player.png").convert()
-  player_img.set_colorkey(config.BLACK)
-
-
   running = True
   while running:
-    
-    running = handle_events()
-    # screen.fill(config.WHITE) 
+    running = handle_events(button)
+    screen.fill(config.WHITE) # Use color from config
 
-    screen.blit(bg_img, bg_pos)
+    mouse_x, mouse_y = pygame.mouse.get_pos()
 
-    player_pos = pygame.mouse.get_pos()
-    x = player_pos[0]
-    y = player_pos[1]
+    if button.collidepoint(mouse_x, mouse_y):
+      button_color = (config.BLUE)
+    else:
+      button_color = (config.GREEN)
 
-    screen.blit(player_img, [x, y])
+    pygame.draw.rect(screen, button_color, button)
 
-  
+    screen.blit(surf, surf_rect)
+
     pygame.display.flip()
 
     # Limit the frame rate to the specified frames per second (FPS)

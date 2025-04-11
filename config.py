@@ -1,6 +1,6 @@
 # Python Configuration Module
 
-TITLE = "Pygame"
+TITLE = "Simple Button"
 # Color constants (RGB)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
